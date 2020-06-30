@@ -6,7 +6,7 @@ namespace Memory.Data.Model
 {
     public class Agent : BaseModelKey
     {
-        public Person Person { get; set; }
+        public Person Principal { get; set; }
         public String Name { get; set; }
     }
 }

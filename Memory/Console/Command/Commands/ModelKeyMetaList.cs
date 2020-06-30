@@ -7,52 +7,53 @@ using System.Reflection;
 
 namespace Memory.Console.Command.Commands
 {
-    public class ModelKeyList : BaseCommand<ModelKeyList>
+    public class ModelKeyMetaList : BaseCommand<ModelKeyMetaList>
     {
 
-        public static readonly string Key = "ModKey";
-        public static readonly string Command = Key + ":" + Modifier.Read;
+        public static readonly string Key = "ModKeyMetaLi";
+        public static readonly string Command = Key;
         public static readonly string Description = "List all final subclasses of BaseModelKey.cs";
 
-        public ModelKeyList(string[] options) : base(options)
+        public ModelKeyMetaList(Dictionary<string, string> options) : base(options)
         {
         }
 
-        public static ModelKeyList NewInstance() => new ModelKeyList(options: new string[0]);
-
         public override string getDescription()
         {
-            return ModelKeyList.Description;
+            return ModelKeyMetaList.Description;
         }
 
         public override string getKey()
         {
-            return ModelKeyList.Key;
+            return ModelKeyMetaList.Key;
         }
     }
 
-    public class ModelKeyListExe : IExecutor<ModelKeyList>
+    public class ModelKeyMetaListExe : IExecutor
     {
-        private static readonly ModelKeyListExe _Instance = new ModelKeyListExe();
 
-        public static ModelKeyListExe getCurrent()
-        {
-            return _Instance;
-        }
-
-        public ModelKeyList Execute(ModelKeyList command)
+        public ICommand Execute(ICommand command)
         {
             Type parentType = typeof(BaseModelKey);
             Assembly assembly = Assembly.GetExecutingAssembly();
             Type[] types = assembly.GetTypes();
             IEnumerable<Type> subclasses = types.Where(t => t.IsSubclassOf(parentType));
 
-            command.Lines = new List<String>();
             foreach (Type type in subclasses)
             {
-                command.Lines.Add(type.Name);
+                command.AddLine(type.Name);
             }
             return command;
+        }
+
+        public bool Handle(string commandString)
+        {
+            return ModelKeyMetaList.Command.ToLower().Equals(commandString.ToLower());
+        }
+
+        public ICommand NewInstance(Dictionary<string, string> options)
+        {
+            return new ModelKeyMetaList(options);
         }
     }
 }

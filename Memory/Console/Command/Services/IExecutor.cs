@@ -1,7 +1,11 @@
-﻿namespace Memory.Console.Command.Services
+﻿using System.Collections.Generic;
+
+namespace Memory.Console.Command.Services
 {
-    public interface IExecutor<T> where T : BaseCommand<T>
+    public interface IExecutor
     {
-        public T Execute(T command);
+        public ICommand Execute(ICommand command) ;
+        public ICommand NewInstance(Dictionary<string, string> options);
+        public bool Handle(string commandString);
     }
 }

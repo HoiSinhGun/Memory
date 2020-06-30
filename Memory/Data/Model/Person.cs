@@ -7,7 +7,7 @@ namespace Memory.Data.Model
     public class Person : BaseModelKey
     {
 
-        public static readonly String ID = "pers";
+        public static readonly String ID = "person";
         public String Name { get; set; }
 
         public static string GetID()

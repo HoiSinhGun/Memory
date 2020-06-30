@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Memory.Data.DAO
 {
-    public abstract class BaseModelDAO<T> where T:BaseModel
+    public abstract class BaseModelDAO<T> : IModelKeyDAO where T:BaseModel
     {
         private readonly DataContext _context;
 
@@ -18,6 +18,12 @@ namespace Memory.Data.DAO
         public void Add(T entity)
         {
             _context.Add(entity);
+            _context.SaveChanges();
+        }
+
+        public void Add(BaseModelKey baseModelKey)
+        {
+            _context.Add(baseModelKey);
             _context.SaveChanges();
         }
 
@@ -37,5 +43,7 @@ namespace Memory.Data.DAO
             var entity = _context.Set<T>().FirstOrDefault(p => p.Id == id);
             return entity;
         }
+
+       
     }
 }
