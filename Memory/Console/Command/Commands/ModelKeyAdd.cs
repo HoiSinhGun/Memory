@@ -1,7 +1,11 @@
-﻿using Memory.Console.Command.Services;
+﻿using Memory.Bridges;
+using Memory.Console.Command.Services;
+using Memory.Data.DAO;
+using Memory.Data.Model;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -36,16 +40,43 @@ namespace Memory.Console.Command.Commands
     public class ModelKeyAddExe : IExecutor
     {
 
+        private ServicesProviderBridge ServicesProviderBridge;
+
+        public ModelKeyAddExe(ServicesProviderBridge servicesProviderBridge)
+        {
+            ServicesProviderBridge = servicesProviderBridge;
+        }
+
         public ICommand Execute(ICommand command)
         {
-            command.getOptions();
+            foreach (var key in command.getOptions().Keys)
+            {
+                command.getOptions().TryGetValue(key, out string value);
+                command.AddLine($"{key}={value}");
+            }
             // - need: entity type, key, other properties (as JSON?)
+            // Entity instance from entityID
+            command.getOptions().TryGetValue(ModelKeyAdd.p_entity, out string entityID);
+            var baseModelKey = ModelUtils.NewEntityInstance(entityID);
+            if(baseModelKey == null)
+            {
+                // exit command, user input invalid
+                command.Abort($"Unknown entityID: {entityID}");
+                return command;
+            }
+            // Set entity key
+            command.getOptions().TryGetValue(ModelKeyAdd.p_entity_key, out string entityKey);
+            baseModelKey.Key = entityKey;
+            // @TODO_GUN: Set other properties
+            // Persist: get persistence services and persist it
+            ServicesProviderBridge._modelKeyDAODict.TryGetValue(baseModelKey.GetType(), out IModelKeyDAO modelKeyDAO);
+            modelKeyDAO.Add(baseModelKey);
             return command;
         }
 
         public bool Handle(string commandString)
         {
-            return ModelKeyMetaList.Command.ToLower().Equals(commandString.ToLower());
+            return ModelKeyAdd.Command.ToLower().Equals(commandString.ToLower());
         }
 
         public ICommand NewInstance(Dictionary<string, string> options)
@@ -54,11 +85,9 @@ namespace Memory.Console.Command.Commands
 
             var optionResolveDict = new Dictionary<string, string>() {
                 {ModelKeyAdd.p_entity,ModelKeyAdd.p_0001 },
-                {ModelKeyAdd.p_entity_key, ModelKeyAdd.p_0001 } 
+                {ModelKeyAdd.p_entity_key, ModelKeyAdd.p_0002 } 
             };
             ModelKeyAdd.resolveOptions(modelKeyAdd, optionResolveDict);
-            BaseCommand<ICommand>.resolveOption(modelKeyAdd, ModelKeyAdd.p_entity, BaseCommand<ICommand>.p_0001);
-            BaseCommand<ICommand>.resolveOption(modelKeyAdd, ModelKeyAdd.p_entity_key, BaseCommand<ICommand>.p_0002);
 
             return modelKeyAdd;
         }

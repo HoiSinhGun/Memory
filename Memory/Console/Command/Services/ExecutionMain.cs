@@ -52,8 +52,8 @@ namespace Memory.Console.Command.Services
                 = _servicesProviderBridge.GetCommandExecutorFor(commandString);
 
             ICommand command = executor.NewInstance(cliArgDict);
-                executor.Execute(command);
-            
+            executor.Execute(command);
+
             _consoleWriter.ListWrite(command.getOutputAsList());
             return command;
         }

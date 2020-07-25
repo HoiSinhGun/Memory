@@ -27,12 +27,13 @@ namespace Memory.Bridges
 
             {
                 _executorDict.Add(typeof(ModelKeyMetaListExe), new ModelKeyMetaListExe());
+                _executorDict.Add(typeof(ModelKeyAddExe), new ModelKeyAddExe(this));
             }
             {
-                foreach (Type type in modelKeyDaoList)
+                foreach (Type modelKeyDao in modelKeyDaoList)
                 {
-                    var service = (IModelKeyDAO) _serviceProvider.GetRequiredService(type);
-                    _modelKeyDAODict.Add(type, service);
+                    var service = (IModelKeyDAO) _serviceProvider.GetRequiredService(modelKeyDao);
+                    _modelKeyDAODict.Add(service.KeyType(), service);
                 }
             }
         }

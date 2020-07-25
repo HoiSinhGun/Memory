@@ -26,6 +26,8 @@ namespace Memory.Console.Command
         public readonly Dictionary<string, string> Options;
         public List<string> Lines = new List<string>();
 
+        public bool Aborted { get; set; }
+
         protected BaseCommand(Dictionary<string, string> options)
         {
             Options = options;
@@ -35,6 +37,8 @@ namespace Memory.Console.Command
         {
             Lines.Add(name);
         }
+
+
 
         public abstract string getDescription();
         public abstract string getKey();
@@ -67,6 +71,18 @@ namespace Memory.Console.Command
                 {
                     options.Add(targetParamName, value);
                 }
+            }
+        }
+
+        public void Abort(params string[] lines)
+        {
+            Aborted = true;
+            if (lines == null)
+                return;
+
+            foreach (var line in lines)
+            {
+                AddLine(line);
             }
         }
     }

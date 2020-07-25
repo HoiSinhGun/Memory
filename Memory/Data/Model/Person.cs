@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Memory.Data.Model
 {
+    [Table("person")]
     public class Person : BaseModelKey
     {
 
@@ -12,7 +15,13 @@ namespace Memory.Data.Model
 
         public static string GetID()
         {
-         return   Person.GetID();
+            return ID;
+        }
+
+        public override SqliteCommand AddEntityParams(SqliteCommand command)
+        {
+            command.Parameters.Add("@name", SqliteType.Text).Value = Name == null ? "":Name;
+            return command;
         }
     }
 }

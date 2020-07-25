@@ -10,5 +10,10 @@ namespace Memory.Data.DAO
         public MoneyTransferCategoryDAO(DataContext context) : base(context)
         {
         }
+
+        public override Type KeyType()
+        {
+            return typeof(MoneyTransferCategory);
+        }
     }
 }

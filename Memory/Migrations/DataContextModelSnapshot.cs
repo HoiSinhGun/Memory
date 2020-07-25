@@ -18,7 +18,7 @@ namespace Memory.Migrations
 
             modelBuilder.Entity("Memory.Data.Model.Agent", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -28,19 +28,19 @@ namespace Memory.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("PersonID")
+                    b.Property<int>("PrincipalId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("PersonID");
+                    b.HasIndex("PrincipalId");
 
-                    b.ToTable("Agents");
+                    b.ToTable("agent");
                 });
 
             modelBuilder.Entity("Memory.Data.Model.MoneyTransferCategory", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -50,14 +50,14 @@ namespace Memory.Migrations
                     b.Property<string>("Key")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.ToTable("MoneyTransferCategories");
+                    b.ToTable("Money_Transfer_Category");
                 });
 
             modelBuilder.Entity("Memory.Data.Model.Person", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -67,14 +67,14 @@ namespace Memory.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.ToTable("person");
                 });
 
             modelBuilder.Entity("Memory.Data.Model.Transaction", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -84,46 +84,48 @@ namespace Memory.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("MoneyTransferCategoryID")
+                    b.Property<int?>("MoneyTransferCategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ReceiverID")
+                    b.Property<int?>("ReceiverId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SenderID")
+                    b.Property<int?>("SenderId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("MoneyTransferCategoryID");
+                    b.HasIndex("MoneyTransferCategoryId");
 
-                    b.HasIndex("ReceiverID");
+                    b.HasIndex("ReceiverId");
 
-                    b.HasIndex("SenderID");
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("Memory.Data.Model.Agent", b =>
                 {
-                    b.HasOne("Memory.Data.Model.Person", "Person")
+                    b.HasOne("Memory.Data.Model.Person", "Principal")
                         .WithMany()
-                        .HasForeignKey("PersonID");
+                        .HasForeignKey("PrincipalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Memory.Data.Model.Transaction", b =>
                 {
                     b.HasOne("Memory.Data.Model.MoneyTransferCategory", "MoneyTransferCategory")
                         .WithMany()
-                        .HasForeignKey("MoneyTransferCategoryID");
+                        .HasForeignKey("MoneyTransferCategoryId");
 
                     b.HasOne("Memory.Data.Model.Agent", "Receiver")
                         .WithMany()
-                        .HasForeignKey("ReceiverID");
+                        .HasForeignKey("ReceiverId");
 
                     b.HasOne("Memory.Data.Model.Agent", "Sender")
                         .WithMany()
-                        .HasForeignKey("SenderID");
+                        .HasForeignKey("SenderId");
                 });
 #pragma warning restore 612, 618
         }

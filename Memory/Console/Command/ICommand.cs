@@ -10,6 +10,12 @@ namespace Memory.Console.Command
         public string getKey();
         public string getDescription();
         public List<string> getOutputAsList();
-       public void AddLine(string name);
+        public void AddLine(string name);
+        /**
+         * Abort the command, set aborted flag
+         **/
+        public void Abort(params string[] lines);
+
+
     }
 }

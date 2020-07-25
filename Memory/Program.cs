@@ -16,6 +16,7 @@ namespace Memory
     {
 
         static List<ICommand> History { get; set; } = new List<ICommand>();
+        static List<string> ConsoleHistory = new List<string>();
 
 
         static void Main(string[] args)
@@ -36,6 +37,7 @@ namespace Memory
             // Command
             serviceCollection
                 .AddSingleton<ConsoleWriter>()
+                .AddSingleton<ConsoleHistoryServices>()
                 .AddSingleton<ExecutionMain>();
 
             // Utils
@@ -43,6 +45,16 @@ namespace Memory
                 .AddSingleton<ServicesProviderBridge>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // DB OnStartup routines
+            // DB Apply Migrations
+            DataContext dataContext
+                = serviceProvider.GetRequiredService<DataContext>();
+            dataContext.OnAppStart(serviceProvider);
+
+            // Track console input
+            ConsoleHistoryServices consoleHistoryServices
+                = serviceProvider.GetRequiredService<ConsoleHistoryServices>();
 
             //configure console logging
             var logger = serviceProvider.GetService<ILoggerFactory>()
@@ -56,8 +68,19 @@ namespace Memory
             while (!v.StartsWith("exit"))
             {
                 v = System.Console.ReadLine();
+                ConsoleHistory = consoleHistoryServices.AddLines(ConsoleHistory, v);
+                consoleHistoryServices.Persist(ConsoleHistory, v);
                 System.Console.WriteLine("");
-               History.Add(executionMain.Execute(v));
+                try
+                {
+                    History.Add(executionMain.Execute(v));
+                }
+                catch (System.Exception)
+                {
+
+                    //throw;
+                    continue; // while
+                }
                 System.Console.WriteLine("");
                 System.Console.WriteLine("");
             }

@@ -2,113 +2,113 @@
 
 namespace Memory.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "MoneyTransferCategories",
+                name: "Money_Transfer_Category",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Key = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MoneyTransferCategories", x => x.ID);
+                    table.PrimaryKey("PK_Money_Transfer_Category", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "person",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Key = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Persons", x => x.ID);
+                    table.PrimaryKey("PK_person", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Agents",
+                name: "agent",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Key = table.Column<string>(nullable: true),
-                    PersonID = table.Column<int>(nullable: true),
+                    PrincipalId = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Agents", x => x.ID);
+                    table.PrimaryKey("PK_agent", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Agents_Persons_PersonID",
-                        column: x => x.PersonID,
-                        principalTable: "Persons",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_agent_person_PrincipalId",
+                        column: x => x.PrincipalId,
+                        principalTable: "person",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SenderID = table.Column<int>(nullable: true),
-                    ReceiverID = table.Column<int>(nullable: true),
-                    MoneyTransferCategoryID = table.Column<int>(nullable: true),
+                    SenderId = table.Column<int>(nullable: true),
+                    ReceiverId = table.Column<int>(nullable: true),
+                    MoneyTransferCategoryId = table.Column<int>(nullable: true),
                     Amount = table.Column<double>(nullable: false),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.ID);
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transactions_MoneyTransferCategories_MoneyTransferCategoryID",
-                        column: x => x.MoneyTransferCategoryID,
-                        principalTable: "MoneyTransferCategories",
-                        principalColumn: "ID",
+                        name: "FK_Transactions_Money_Transfer_Category_MoneyTransferCategoryId",
+                        column: x => x.MoneyTransferCategoryId,
+                        principalTable: "Money_Transfer_Category",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transactions_Agents_ReceiverID",
-                        column: x => x.ReceiverID,
-                        principalTable: "Agents",
-                        principalColumn: "ID",
+                        name: "FK_Transactions_agent_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "agent",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transactions_Agents_SenderID",
-                        column: x => x.SenderID,
-                        principalTable: "Agents",
-                        principalColumn: "ID",
+                        name: "FK_Transactions_agent_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "agent",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Agents_PersonID",
-                table: "Agents",
-                column: "PersonID");
+                name: "IX_agent_PrincipalId",
+                table: "agent",
+                column: "PrincipalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_MoneyTransferCategoryID",
+                name: "IX_Transactions_MoneyTransferCategoryId",
                 table: "Transactions",
-                column: "MoneyTransferCategoryID");
+                column: "MoneyTransferCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_ReceiverID",
+                name: "IX_Transactions_ReceiverId",
                 table: "Transactions",
-                column: "ReceiverID");
+                column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_SenderID",
+                name: "IX_Transactions_SenderId",
                 table: "Transactions",
-                column: "SenderID");
+                column: "SenderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -117,13 +117,13 @@ namespace Memory.Migrations
                 name: "Transactions");
 
             migrationBuilder.DropTable(
-                name: "MoneyTransferCategories");
+                name: "Money_Transfer_Category");
 
             migrationBuilder.DropTable(
-                name: "Agents");
+                name: "agent");
 
             migrationBuilder.DropTable(
-                name: "Persons");
+                name: "person");
         }
     }
 }

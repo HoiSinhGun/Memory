@@ -1,4 +1,5 @@
 ﻿using Memory.Data.Model;
+using System;
 
 namespace Memory.Data.DAO
 {
@@ -6,6 +7,11 @@ namespace Memory.Data.DAO
     {
         public PersonDAO(DataContext context) : base(context)
         {
+        }
+
+        public override Type KeyType()
+        {
+            return typeof(Person);
         }
     }
 }

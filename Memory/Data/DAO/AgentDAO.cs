@@ -10,5 +10,10 @@ namespace Memory.Data.DAO
         public AgentDAO(DataContext context) : base(context)
         {
         }
+
+        public override Type KeyType()
+        {
+            return typeof(Agent);
+        }
     }
 }
