@@ -1,39 +1,22 @@
-﻿using Memory.Data.Model;
-using Microsoft.Data.Sqlite;
+﻿using Memory.Data.Model.Console;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace Memory.Data.DAO
+namespace Memory.Data.DAO.Console
 {
-    // @TODOGUN: T:BaseModel and IModelKeyDAO ... seems to be erroneous
-    public abstract class BaseModelDAO<T> : IModelKeyDAO where T : BaseModel
+    class ConsoleHistoryDAO
     {
-        private readonly DataContext _context;
-
-        public BaseModelDAO(DataContext context)
+        public void create(ConsoleHistory consoleHistory)
         {
-            _context = context;
-        }
-
-        public void Add(T entity)
-        {
-            _context.Add(entity);
-            _context.SaveChanges();
-        }
-
-        public void Add(BaseModelKey baseModelKey)
-        {
+            if (consoleHistory.Timestamp == null)
+                consoleHistory.Timestamp = DateTime.Now;
             var connection = DataUtils.NewDbConnection(DbConnectionMode.ReadWriteCreate);
             try
             {
                 connection.Open();
                 var cmd = connection.CreateCommand();
-                baseModelKey.AddAllParameters(cmd);
-                var columns = new StringBuilder();
-                var values = new StringBuilder();
-                bool first = true;
+                cmd.Parameters.Add()
                 foreach (SqliteParameter param in cmd.Parameters)
                 {
                     if (!first)
@@ -61,24 +44,5 @@ namespace Memory.Data.DAO
                 connection.Close();
             }
         }
-
-        public void AddAll(IEnumerable<T> entityList)
-        {
-            _context.AddRange(entityList);
-            _context.SaveChanges();
-        }
-
-        public List<T> GetAll()
-        {
-            return _context.Set<T>().ToList();
-        }
-
-        public T Get(int id)
-        {
-            var entity = _context.Set<T>().FirstOrDefault(p => p.Id == id);
-            return entity;
-        }
-
-        public abstract Type KeyType();
     }
 }
